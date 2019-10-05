@@ -64,6 +64,7 @@ export class VisibilityPoles {
             lineCheck.near = 0;
             lineCheck.far = direction.length();
             lineCheck.set(pointAboveBuildingA, direction.clone().normalize());
+            lineCheck.linePrecision = 0.01;
 
             let intersectedBuildings = lineCheck.intersectObjects(threeState.scene.children);
             // The three.js raycasting function reports `poleA` and `poleB` in the intersection test,
