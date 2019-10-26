@@ -5,18 +5,18 @@
 <link rel="stylesheet" href="index.css">
 <body>
 <div class="f4 f1-ns fw4 ma4">City<sup class="h-25 fw1">3d</sup></div>
-<div class="flex flex-column ma4 vh-50-l vh-50 overflow-hidden">
+<div class="flex flex-column ma4 vh-75-l vh-50 overflow-hidden">
     <canvas tabindex='1' id="scene"></canvas>
 </div>
 
 <div class="flex flex-column ma4">
     <div class="flex">
         <div class="f4 mr3">Grid Size <span id="gridSizeDisplay">(025)</span></div>
-        <input type="range" id="gridSize" value=25 min=1 max=200>
+        <input type="range" id="gridSize" value=25 min=1 max=2000>
     </div>
     <div class="flex">
         <div class="f4 mr3">Building Count <span id="buildingCountDisplay">(00025)</span></div>
-        <input type="range" id="buildingCount" value=25 min=1 max=10000>
+        <input type="range" id="buildingCount" value=25 min=1 max=1000000>
     </div>
 
     <button id="resetVisibility" class="mt2">Reset Visibility Test</button>
@@ -28,6 +28,32 @@
         <li>Click two buildings to perform a visibility test (click reset to try again {shortcut: r})</li>
     </ul>
 </div>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+    precision highp float;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+    attribute vec2 offset;
+    attribute float height;
+    attribute vec3 position;
+    attribute vec3 color;
+    varying vec3 v_color;
+
+    void main() {
+        // TODO: Why is this Z instead of Y
+        float heightScale = max(1.0, ((height / 2.0) * sign(position.z)));
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position + vec3(offset, heightScale), 1.0);
+        v_color = color;
+    }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+    precision highp float;
+    varying vec3 v_color;
+    void main() {
+        gl_FragColor = vec4(v_color.r / 255.0, v_color.g / 255.0, v_color.b / 255.0, 1.0);
+    }
+</script>
 
 </body>
 </html>

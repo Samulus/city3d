@@ -12,12 +12,18 @@ export function initThree(gridSize) {
     const canvas = document.getElementById("scene");
     const context = canvas.getContext('webgl2', {alpha: false});
 
+    THREE.Object3D.DefaultUp = new THREE.Vector3(0,0,1);
+
     threeState.renderer = new THREE.WebGLRenderer({canvas: canvas, context: context});
     threeState.scene = new THREE.Scene();
-    threeState.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    threeState.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000);
     threeState.renderer.setSize(canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
     threeState.controls = new OrbitControls(threeState.camera, threeState.renderer.domElement);
     threeState.camera.position.z = 20; // zoom out by default
+
+    // Debugging
+    const axesHelper = new THREE.AxesHelper( 5 );
+    threeState.scene.add(axesHelper)
 
     // Automatically resize window
     window.addEventListener('resize', onWindowResize, false);
@@ -44,28 +50,27 @@ export function deleteOldMeshes(threeState) {
     }
 }
 
-// NOTE: For max performance / ram efficiency we should upload a buffer containing
-//       all the colors and sample that instead of creating 10,000 instances of MeshBasicMaterial.
 export function populateSceneWithBuildings(threeState, worldBuffer) {
-    const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-    let positionIndex = 0;
-    for (let i = 0; i < worldBuffer.instanceCount; ++i) {
-        let buildingMesh =
-            new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: worldBuffer.colorBuffer[i]}));
+    const bufferGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
-        // Place in precomputed random location
-        buildingMesh.position.x = worldBuffer.xzTranslationBuffer[positionIndex];
-        buildingMesh.position.z = worldBuffer.xzTranslationBuffer[positionIndex + 1];
-        positionIndex += 2;
+    const geometry = new THREE.InstancedBufferGeometry()
+    geometry.index = bufferGeometry.index;
+    geometry.attributes.position = bufferGeometry.attributes.position;
 
-        // Random building height
-        const heightScale = worldBuffer.heightBuffer[i];
+    const material = new THREE.RawShaderMaterial( {
+        vertexShader: document.getElementById('vertexShader').textContent,
+        fragmentShader: document.getElementById('fragmentShader').textContent
+    });
 
-        // scale + translate for variable building height with
-        // each building starting at the same y-level (0)
-        buildingMesh.translateY(heightScale * 0.5);
-        buildingMesh.scale.y = heightScale;
+    const mesh = new THREE.Mesh(geometry, material)
+    threeState.scene.add(mesh);
 
-        threeState.scene.add(buildingMesh);
-    }
+    const offsetAttribute = new THREE.InstancedBufferAttribute(new Float32Array(worldBuffer.xzTranslationBuffer), 2);
+    geometry.addAttribute('offset', offsetAttribute)
+
+    const heightAttribute = new THREE.InstancedBufferAttribute(new Float32Array(worldBuffer.heightBuffer), 1);
+    geometry.addAttribute('height', heightAttribute)
+
+    const colorAttribute = new THREE.InstancedBufferAttribute(new Float32Array(worldBuffer.colorBuffer), 3);
+    geometry.addAttribute('color', colorAttribute)
 }
