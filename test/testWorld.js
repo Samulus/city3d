@@ -13,12 +13,11 @@ const World = require ("../src/world").World;
 suite("world.js", () => {
     test("constructor() - Buildings are added on construction", () => {
         const world = new World(2, 4); // 2x2, 4 buildings → full map
-        let building = world.buildingIterable().next();
         let addedBuildings = 0;
 
         for (let b of world.buildingIterable()) {
-            assert.isFalse(building.done);
-            assert.isNotNull(building.value);
+            assert.isFalse(b.done);
+            assert.isNotNull(b.value);
             addedBuildings++;
         }
 
