@@ -11,22 +11,9 @@
 
 <div class="flex flex-column ma4">
     <div class="flex">
-        <div class="f4 mr3">Grid Size <span id="gridSizeDisplay">(025)</span></div>
-        <input type="range" id="gridSize" value=25 min=1 max=2000>
+        <input id='gridSize' placeholder="(grid size)"/>
+        <input id='buildingCount' placeholder="(building count)">
     </div>
-    <div class="flex">
-        <div class="f4 mr3">Building Count <span id="buildingCountDisplay">(00025)</span></div>
-        <input type="range" id="buildingCount" value=25 min=1 max=1000000>
-    </div>
-
-    <button id="resetVisibility" class="mt2">Reset Visibility Test</button>
-
-    <ul class="mt2">
-        <li>Left click to drag camera</li>
-        <li>Right click to pan camera</li>
-        <li>Scroll to zoom in and out</li>
-        <li>Click two buildings to perform a visibility test (click reset to try again {shortcut: r})</li>
-    </ul>
 </div>
 
 <script id="vertexShader" type="x-shader/x-vertex">

@@ -18,7 +18,6 @@ animate();
 
 /*
 // DOM elements
-const CANVAS = document.getElementById("scene");
 const GRID_SIZE_SLIDER = document.getElementById("gridSize");
 const BUILDING_COUNT_SLIDER = document.getElementById("buildingCount");
 const GRID_SIZE_DISPLAY = document.getElementById("gridSizeDisplay");
