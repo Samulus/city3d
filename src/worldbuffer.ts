@@ -4,6 +4,7 @@
 // Date: 10/05/2019
 //
 
+/*
 function hexToRgb(hex) {
     var bigint = parseInt(hex, 16);
     var r = (bigint >> 16) & 255;
@@ -13,6 +14,7 @@ function hexToRgb(hex) {
 }
 
 export class WorldBuffer {
+    private heightBuffer: any[];
     constructor(world) {
         this.heightBuffer = [];
         this.colorBuffer = [];
@@ -32,3 +34,4 @@ export class WorldBuffer {
         this.instanceCount = i;
     }
 }
+ */

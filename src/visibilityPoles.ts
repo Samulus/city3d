@@ -4,6 +4,7 @@
 // Date: 10/05/2019
 //
 
+/*
 const THREE = require('three');
 
 export class VisibilityPoles {
@@ -114,3 +115,4 @@ export class VisibilityPoles {
         return new THREE.Line(geometry, material);
     }
 }
+ */

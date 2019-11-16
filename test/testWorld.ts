@@ -1,3 +1,4 @@
+/*
 //
 // worldbuffer.js
 // Author: Samuel Vargas
@@ -52,3 +53,4 @@ suite("world.js", () => {
         assert.equal(position.z, 0);
     });
 });
+ */

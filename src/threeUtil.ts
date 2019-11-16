@@ -4,15 +4,14 @@
 // Date: 10/05/2019
 //
 
+/*
 const THREE = require('three');
 const OrbitControls = require('three-orbit-controls')(THREE);
 
 export function initThree(gridSize) {
     const threeState = {};
-    const canvas = document.getElementById("scene");
+    const canvas: HTMLCanvasElement = document.getElementById("scene") as HTMLCanvasElement;
     const context = canvas.getContext('webgl2', {alpha: false});
-
-    THREE.Object3D.DefaultUp = new THREE.Vector3(0,0,1);
 
     threeState.renderer = new THREE.WebGLRenderer({canvas: canvas, context: context});
     threeState.scene = new THREE.Scene();
@@ -74,3 +73,4 @@ export function populateSceneWithBuildings(threeState, worldBuffer) {
     const colorAttribute = new THREE.InstancedBufferAttribute(new Float32Array(worldBuffer.colorBuffer), 3);
     geometry.addAttribute('color', colorAttribute)
 }
+ */

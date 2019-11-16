@@ -1,43 +1,47 @@
+/*
 //
-// world.js
+// world.ts
 // Author: Samuel Vargas
 // Date: 10/05/2019
 //
 
-const Building = require("./building").Building;
+import {Building} from "./building";
 const Util = require("./util");
 
 export class World {
-    constructor(gridSize, numBuildings) {
-        this._cells = new Array(gridSize * gridSize).fill(null);
-        this._numBuildings = numBuildings;
-        this.addRandomBuildings(this._numBuildings);
+    private cells: Array<Building | null>;
+    private numBuildings: number;
+
+    constructor(gridSize: number, numBuildings: number) {
+        this.cells = new Array(gridSize * gridSize).fill(null);
+        this.numBuildings = numBuildings;
+        this.addRandomBuildings(this.numBuildings);
     }
 
-    addRandomBuildings(numToAdd) {
+    addRandomBuildings(numToAdd: number) {
         let addedCount = 0;
         for (let i = 0; i < numToAdd; ++i) {
             const index = this.getRandomCellIndex((cell) => cell === null);
             if (index < 0) {
                 // no more space for additional buildings
-                this._numBuildings += addedCount;
+                this.numBuildings += addedCount;
                 return;
             }
-            this._cells[index] = Building.getRandomBuilding();
+            this.cells[index] = Building.getRandomBuilding();
             addedCount++;
         }
     }
 
-    getRandomCellIndex(filterCB) {
-        const randArrIndex = Util.getRandIntUpTo(this._cells.length);
+    getRandomCellIndex(filterCB: (cell: Building | null) => boolean): number {
+        const randArrIndex = Util.getRandIntUpTo(this.cells.length);
         for (let i = randArrIndex; i >= 0; --i) {
-            if (filterCB(this._cells[i])) {
+            if (filterCB(this.cells[i])) {
                 return i;
             }
         }
 
-        for (let i = randArrIndex + 1; i < this._cells.length; ++i) {
-            if (filterCB(this._cells[i])) {
+        for (let i = randArrIndex + 1; i < this.cells.length; ++i) {
+            if (filterCB(this.cells[i])) {
                 return i;
             }
         }
@@ -45,7 +49,7 @@ export class World {
         return -1;
     }
 
-    static indexToWorldPosition(index, numberOfCells) {
+    static indexToWorldPosition(index: number, numberOfCells: number) {
         const cellsSquared = Math.sqrt(numberOfCells);
 
         // 1D → 2D Coordinates (+ Half-Offset)
@@ -64,12 +68,13 @@ export class World {
         return {x: col, z: row}
     }
 
-    *buildingIterable() {
-        for (let i = 0; i < this._cells.length; ++i) {
-            if (this._cells[i] !== null) {
-                const position = World.indexToWorldPosition(i, this._cells.length);
-                yield {done: false, value: Object.assign(position, this._cells[i])};
+    * buildingIterable() {
+        for (let i = 0; i < this.cells.length; ++i) {
+            if (this.cells[i] !== null) {
+                const position = World.indexToWorldPosition(i, this.cells.length);
+                yield {done: false, value: Object.assign(position, this.cells[i])};
             }
         }
     }
 }
+ */

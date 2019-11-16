@@ -5,7 +5,9 @@
 //
 
 import './index.css'
+/*
 import "@babel/polyfill";
+import {ThreeState} from "./threeState";
 
 // DOM elements
 const CANVAS = document.getElementById("scene");
@@ -27,6 +29,9 @@ let GLOBAL_WORLD = new World(parseInt(GRID_SIZE_SLIDER.value), parseInt(BUILDING
 let GLOBAL_WORLD_BUFFER = new WorldBuffer(GLOBAL_WORLD);
 let GLOBAL_OBJ_PICKER = new ObjPicker();
 let GLOBAL_THREE_STATE = ThreeUtil.initThree(CANVAS);
+
+const threeState = new ThreeState(document.getElementById("scene") as HTMLCanvasElement);
+let worldBuffer = new World();
 
 function regenerateWorld() {
     GLOBAL_WORLD = new World(parseInt(GRID_SIZE_SLIDER.value), parseInt(BUILDING_COUNT_SLIDER.value));
@@ -87,3 +92,4 @@ function animate() {
 }
 
 animate();
+ */

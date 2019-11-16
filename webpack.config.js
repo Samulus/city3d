@@ -1,28 +1,20 @@
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
+    entry: './src/index.ts',
     module: {
-        rules: [{
-                test: [/.css$/],
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            },
+        rules: [
             {
-                test: [/.js$/],
-                exclude: /(node_modules)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            '@babel/preset-env'
-                        ]
-                    }
-                }
+            test: [/.css$/],
+            use: [
+                'style-loader',
+                'css-loader'
+            ]
             },
             {
                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
@@ -41,8 +33,20 @@ module.exports = {
                     name: '[name].[ext]',
                     outputPath: 'img',
                 }
-            }
-        ]
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
+    output: {
+        filename: 'main.js',
+        path: path.resolve(__dirname, 'dist'),
     },
 
     plugins: [
