@@ -9,36 +9,33 @@
     <canvas tabindex='1' id="scene"></canvas>
 </div>
 
+<!--
 <div class="flex flex-column ma4">
     <div class="flex">
         <input id='gridSize' placeholder="(grid size)"/>
         <input id='buildingCount' placeholder="(building count)">
     </div>
 </div>
+-->
 
 <script id="vertexShader" type="x-shader/x-vertex">
     precision highp float;
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
-    attribute vec2 offset;
-    attribute float height;
     attribute vec3 position;
-    attribute vec3 color;
-    varying vec3 v_color;
 
     void main() {
-        // TODO: Why is this Z instead of Y
-        float heightScale = max(1.0, ((height / 2.0) * sign(position.z)));
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position + vec3(offset, heightScale), 1.0);
-        v_color = color;
+        //gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xy, position.z * gl_InstanceID, 1);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xy, position.z, 1);
     }
 </script>
 
 <script id="fragmentShader" type="x-shader/x-fragment">
     precision highp float;
-    varying vec3 v_color;
+    //varying vec3 v_color;
     void main() {
-        gl_FragColor = vec4(v_color.r / 255.0, v_color.g / 255.0, v_color.b / 255.0, 1.0);
+        //gl_FragColor = vec4(v_color.r / 255.0, v_color.g / 255.0, v_color.b / 255.0, 1.0);
+        gl_FragColor = vec4(1, 0, 0, 1);
     }
 </script>
 

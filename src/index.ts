@@ -6,13 +6,24 @@
 
 import './index.css'
 import { ThreeState } from './threeState';
+import { CPUGPUBridge } from './cpugpubridge';
 
 const threeState = new ThreeState(document.getElementById("scene") as HTMLCanvasElement);
+const cpuGpuBridge = new CPUGPUBridge(
+    threeState,
+    document.getElementById('vertexShader')!.textContent as string,
+    document.getElementById('fragmentShader')!.textContent as string
+);
+
+// Events
+window.addEventListener('resize', (): any => { threeState.onWindowResize() }, false);
 
 function animate() {
     requestAnimationFrame(animate);
     threeState.render();
 }
+
+// generate the world
 
 animate();
 
