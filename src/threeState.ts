@@ -4,32 +4,31 @@
 // Date: 11/10/2019
 //
 
-
-/*
 const THREE = require('three');
 import {Vector3, PerspectiveCamera, Scene, WebGLRenderer} from "three";
-import {OrbitControls} from "three-orbit-controls-ts";
+const OrbitControls = require('three-orbit-controls')(THREE)
 
 export class ThreeState {
     private readonly canvas: HTMLCanvasElement;
     private readonly context: WebGL2RenderingContext;
     private renderer: WebGLRenderer;
     private scene: Scene;
-    private controls: OrbitControls;
+    private controls: any;
     private readonly camera: PerspectiveCamera;
 
     constructor(canvas: HTMLCanvasElement) {
         THREE.Object3D.DefaultUp = new Vector3(0,0,1);
+        this.scene = new THREE.Scene()
         this.canvas = canvas;
-        this.context = canvas.getContext("webgl2", {alpha: false});
+        this.context = canvas.getContext("webgl2", {alpha: false})!;
         this.renderer = new WebGLRenderer({
             canvas: this.canvas,
             context: this.context
         });
 
         this.renderer.setSize(
-            this.canvas.parentElement.clientWidth,
-            this.canvas.parentElement.clientHeight
+            this.canvas.parentElement!.clientWidth,
+            this.canvas.parentElement!.clientHeight
         );
 
         this.camera = new THREE.PerspectiveCamera(
@@ -51,6 +50,8 @@ export class ThreeState {
     onWindowResize(canvasWidth: number, canvasHeight: number) {
         this.camera.aspect = canvasWidth / canvasHeight;
     }
-}
 
- */
+    public render() {
+        this.renderer.render(this.scene, this.camera)
+    }
+}

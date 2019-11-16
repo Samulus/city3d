@@ -5,10 +5,18 @@
 //
 
 import './index.css'
-/*
-import "@babel/polyfill";
-import {ThreeState} from "./threeState";
+import { ThreeState } from './threeState';
 
+const threeState = new ThreeState(document.getElementById("scene") as HTMLCanvasElement);
+
+function animate() {
+    requestAnimationFrame(animate);
+    threeState.render();
+}
+
+animate();
+
+/*
 // DOM elements
 const CANVAS = document.getElementById("scene");
 const GRID_SIZE_SLIDER = document.getElementById("gridSize");
