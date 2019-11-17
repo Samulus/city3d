@@ -13,7 +13,7 @@ export class CPUGPUBridge {
     private materialShader: ShaderMaterial;
 
     constructor(threeState: ThreeState, vertexShaderSource: string, fragmentShaderSource: string) {
-        this.bufferGeometry = new BoxBufferGeometry(1, 2, 1);
+        this.bufferGeometry = new BoxBufferGeometry(1, 1, 1);
         this.materialShader = new THREE.RawShaderMaterial({vertexShader: vertexShaderSource, fragmentShader: fragmentShaderSource});
         const mesh = new InstancedMesh(this.bufferGeometry, this.materialShader, 100)
         mesh.name = "Base Building";
