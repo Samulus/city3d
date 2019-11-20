@@ -19,10 +19,12 @@ export class Camera {
         );
 
         this.sceneMatrix = m4.identity();
+        //this.sceneMatrix =  m4.lookAt(v3.create(1,0.2, -1), v3.create(0,0,0), v3.create(0, 1, 0));
+
     }
 
     getAmalgamatedMatrix(): m4.Mat4 {
-        const r = m4.translate(this.sceneMatrix, v3.create(0, 0, -5))
-        return r;
+        return m4.multiply(this.perspectiveMatrix, this.sceneMatrix);
+        //return m4.multiply(this.sceneMatrix, this.perspectiveMatrix);
     }
 }

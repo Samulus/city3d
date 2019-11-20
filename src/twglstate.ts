@@ -21,6 +21,8 @@ export class TWGLState {
             g: ((backgroundColor >> 8) & 255) / 255.0,
             b: (backgroundColor & 255) / 255.0
         }
+
+        this.onWindowResize();
     }
 
     get gl() {
@@ -36,22 +38,6 @@ export class TWGLState {
         );
     }
 
-    /*
-    addShader(name: string, src: { vertex: string; fragment: string; }) {
-        this.shaders.set(name, twgl.createProgramInfo(this._gl, [ src.vertex, src.fragment]));
-    }
-
-    useShader(name: string) {
-        if (!this.shaders.has(name)) {
-            throw new Error(`${name} is not present in shaders, call addShader first.`);
-        }
-        this._gl.useProgram(this.shaders.get(name)!.program);
-
-    }
-
-    getProgram(name: string) {
-    }
-    */
 
     onWindowResize() {
         const width = (this._gl.canvas as HTMLElement).parentElement!.clientWidth;
