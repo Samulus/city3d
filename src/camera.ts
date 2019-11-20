@@ -4,7 +4,7 @@
 // Date: 11/05/2019
 //
 
-import { m4 } from "twgl.js";
+import { m4, v3 } from "twgl.js";
 
 export class Camera {
     private perspectiveMatrix: m4.Mat4;
@@ -22,6 +22,7 @@ export class Camera {
     }
 
     getAmalgamatedMatrix(): m4.Mat4 {
-        return m4.multiply(this.perspectiveMatrix, this.sceneMatrix);
+        const r = m4.translate(this.sceneMatrix, v3.create(0, 0, -5))
+        return r;
     }
 }

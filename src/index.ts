@@ -26,18 +26,28 @@ const programInfo = twgl.createProgramInfo(twglState.gl, [
     document.getElementById("fragmentShader")!.textContent as string,
 ])
 
+twglState.gl.useProgram(programInfo.program)
+
 const bufferInfo = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
 twgl.setBuffersAndAttributes(twglState.gl, programInfo, bufferInfo)
-
-
+const modelUniformLoc = twglState.gl.getUniformLocation(programInfo.program, "model")
+twglState.gl.uniformMatrix4fv(modelUniformLoc, false, camera.getAmalgamatedMatrix());
 
 // Events
 window.addEventListener('resize', (): any => { 
     twglState.onWindowResize() 
 }, false);
 
+twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
 function animate() {
-    twglState.render();
+    twglState.gl.clear(
+        twglState.gl.COLOR_BUFFER_BIT | 
+        twglState.gl.DEPTH_BUFFER_BIT | 
+        twglState.gl.STENCIL_BUFFER_BIT
+    );
+
+    twgl.drawBufferInfo(twglState.gl, bufferInfo)
+
     requestAnimationFrame(animate);
 }
 
