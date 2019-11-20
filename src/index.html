@@ -5,37 +5,26 @@
 <link rel="stylesheet" href="index.css">
 <body>
 <div class="f4 f1-ns fw4 ma4">City<sup class="h-25 fw1">3d</sup></div>
-<div class="flex flex-column ma4 vh-75-l vh-50 overflow-hidden">
-    <canvas tabindex='1' id="scene"></canvas>
-</div>
 
-<!--
-<div class="flex flex-column ma4">
-    <div class="flex">
-        <input id='gridSize' placeholder="(grid size)"/>
-        <input id='buildingCount' placeholder="(building count)">
-    </div>
+<div class="flex flex-column ma4 vh-50 vh-75-l overflow-hidden">
+    <canvas class="h-inherit" tabindex='1' id="scene"></canvas>
 </div>
--->
 
 <script id="vertexShader" type="x-shader/x-vertex">
-    precision highp float;
-    uniform mat4 modelViewMatrix;
-    uniform mat4 projectionMatrix;
-    attribute vec3 position;
-
+    #version 300 es
+    precision mediump float;
+    in vec4 position;
     void main() {
-        //gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xy, position.z * gl_InstanceID, 1);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position.xy, position.z, 1);
+        gl_Position = position;
     }
 </script>
 
 <script id="fragmentShader" type="x-shader/x-fragment">
-    precision highp float;
-    //varying vec3 v_color;
+    #version 300 es
+    precision mediump float;
+    out vec4 outColor;
     void main() {
-        //gl_FragColor = vec4(v_color.r / 255.0, v_color.g / 255.0, v_color.b / 255.0, 1.0);
-        gl_FragColor = vec4(1, 0, 0, 1);
+        outColor = vec4(1, 0, 0, 1);
     }
 </script>
 

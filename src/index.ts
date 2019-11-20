@@ -5,25 +5,41 @@
 //
 
 import './index.css'
-import { ThreeState } from './threeState';
-import { CPUGPUBridge } from './cpugpubridge';
+import { TWGLState } from './twglstate';
+import { Camera } from './camera';
+import * as twgl from 'twgl.js';
 
-const threeState = new ThreeState(document.getElementById("scene") as HTMLCanvasElement);
-const cpuGpuBridge = new CPUGPUBridge(
-    threeState,
-    document.getElementById('vertexShader')!.textContent as string,
-    document.getElementById('fragmentShader')!.textContent as string
+// Init
+const twglState = new TWGLState(
+    document.getElementById("scene") as HTMLCanvasElement
 );
 
+const camera = new Camera(
+    0.87266462,
+    twglState.canvasWidth() / twglState.canvasHeight(),
+    0.1,
+    1000
+);
+
+const programInfo = twgl.createProgramInfo(twglState.gl, [ 
+    document.getElementById("vertexShader")!.textContent as string,
+    document.getElementById("fragmentShader")!.textContent as string,
+])
+
+const bufferInfo = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
+twgl.setBuffersAndAttributes(twglState.gl, programInfo, bufferInfo)
+
+
+
 // Events
-window.addEventListener('resize', (): any => { threeState.onWindowResize() }, false);
+window.addEventListener('resize', (): any => { 
+    twglState.onWindowResize() 
+}, false);
 
 function animate() {
+    twglState.render();
     requestAnimationFrame(animate);
-    threeState.render();
 }
-
-// generate the world
 
 animate();
 

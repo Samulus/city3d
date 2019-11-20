@@ -1,13 +1,18 @@
-const webpack = require('webpack');
+const path = require('path');
+const glob = require('glob')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyPlugin = require('copy-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const path = require('path');
+const PurgecssPlugin = require('purgecss-webpack-plugin')
+
+const PATHS = {
+    src: path.join(__dirname, 'src'),
+    dist: path.join(__dirname, "dist")
+}
 
 module.exports = {
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     entry: './src/index.ts',
+
     module: {
         rules: [
             {
@@ -47,7 +52,7 @@ module.exports = {
     },
     output: {
         filename: 'main.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: `${PATHS.dist}`
     },
 
     plugins: [
@@ -55,15 +60,17 @@ module.exports = {
             filename: "[name].css",
             chunkFilename: "[id].css"
         }),
+        new PurgecssPlugin({
+            paths: glob.sync(`${PATHS.src}/**/*`,  { nodir: true }),
+        }),
         new HtmlWebpackPlugin({
             template: "./src/index.html",
             filename: "./index.html",
             inject: true,
             minify: {
                 removeComments: true,
-                collapseWhitespace: false
+                collapseWhitespace: true
             }
         }),
-        new BundleAnalyzerPlugin()
     ]
 };

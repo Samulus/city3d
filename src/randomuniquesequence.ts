@@ -47,6 +47,7 @@ export class RandomUniqueSequence implements Iterable<number|null> {
             }
         }
     }
+    
     private nextNumberInSequence(): number | null {
         let nextRandomNumber = null;
         while (this.index < this.smallPrime) {
