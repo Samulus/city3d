@@ -8,13 +8,17 @@ import './index.css'
 import { TWGLState } from './twglstate';
 import { Camera } from './camera';
 import * as twgl from 'twgl.js';
+import { Arcball } from './arcball';
 
 // Init
 const twglState = new TWGLState(
     document.getElementById("scene") as HTMLCanvasElement
 );
 
+const arcball = new Arcball();
+
 const camera = new Camera(
+    arcball,
     0.87266462,
     twglState.canvasWidth() / twglState.canvasHeight(),
     0.01,

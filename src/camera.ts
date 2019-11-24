@@ -5,14 +5,17 @@
 //
 
 import { m4, v3 } from "twgl.js";
-import { transcode } from "buffer";
+import { Arcball } from './arcball';
 
 export class Camera {
     private perspectiveMatrix: m4.Mat4;
     private dirty = false;
     private eye: v3.Vec3;
+    private arcball: Arcball;
 
-    constructor(fovRadians: number, aspect: number, zNear: number, zFar: number) {
+    constructor(arcball: Arcball, fovRadians: number, aspect: number, zNear: number, zFar: number) {
+        this.arcball = arcball;
+
         this.perspectiveMatrix =  m4.perspective(
             fovRadians,
             aspect,
@@ -27,10 +30,11 @@ export class Camera {
       return m4.multiply(this.perspectiveMatrix, m4.translation(this.eye));
     }
 
+  
+
     zoom(amountMeters: number) {
         this.eye[2] += amountMeters;
         this.dirty = true;
-        console.log(this.eye);
     }
 
     get isDirty() {
