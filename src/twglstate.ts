@@ -42,6 +42,7 @@ export class TWGLState {
     onWindowResize() {
         const width = (this._gl.canvas as HTMLElement).parentElement!.clientWidth;
         const height = (this._gl.canvas as HTMLElement).parentElement!.clientHeight;
+        twgl.resizeCanvasToDisplaySize(this._gl.canvas as HTMLCanvasElement, 1);
         this._gl.viewport(0, 0, width, height);
     }
 
