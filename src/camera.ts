@@ -5,7 +5,6 @@
 //
 
 import { m4, v3 } from "twgl.js";
-import { Arcball } from './arcball';
 
 export class Camera {
     private perspectiveMatrix: m4.Mat4;

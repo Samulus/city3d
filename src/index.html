@@ -14,9 +14,31 @@
     #version 300 es
     precision mediump float;
     in vec4 position;
-    uniform mat4 model;
+    uniform mat4 mvp;
+    uniform int smallPrime;
+    uniform int largePrime;
+
+    float scale(float n, float inMin, float inMax, float outMin, float outMax) {
+        return (n - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+
     void main() {
-        gl_Position = model * position;
+
+        // 1D Index -> 2D Coordinates (+ half offset)
+        //float col = float(randomIndex % smallPrime) + 0.5;
+        //float row = float(randomIndex) / float(smallPrime) + 0.5;
+
+        // 2D -> 2D Normalized
+        //row /= float(smallPrime);
+        //col /= float(smallPrime);
+
+        // 2D Normalized -> World
+        //float halfOfGrid = float(smallPrime) * 0.5;
+        //row = scale(row, 0.0, 1.0, -halfOfGrid, halfOfGrid);
+        //col = scale(col, 0.0, 1.0, -halfOfGrid, halfOfGrid);
+
+        int randomIndex = (gl_InstanceID * largePrime) % smallPrime;
+        gl_Position = mvp * (vec4(randomIndex, randomIndex, 0, 0) + position);
     }
 </script>
 
