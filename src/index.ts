@@ -5,20 +5,16 @@
 //
 
 import './index.css'
+import * as twgl from 'twgl.js';
 import { TWGLState } from './twglstate';
 import { Camera } from './camera';
-import * as twgl from 'twgl.js';
-import { Arcball } from './arcball';
 
 // Init
 const twglState = new TWGLState(
     document.getElementById("scene") as HTMLCanvasElement
 );
 
-const arcball = new Arcball();
-
 const camera = new Camera(
-    arcball,
     0.87266462,
     twglState.canvasWidth() / twglState.canvasHeight(),
     0.01,
@@ -30,11 +26,26 @@ const programInfo = twgl.createProgramInfo(twglState.gl, [
     document.getElementById("fragmentShader")!.textContent as string,
 ])
 
-
 // Events
 window.addEventListener('resize', (): any => { 
     twglState.onWindowResize() 
 }, false);
+
+let mouseDown = false;
+(twglState.gl.canvas as HTMLElement).addEventListener('mousedown', e => {
+   mouseDown = true;
+});
+
+(twglState.gl.canvas as HTMLElement).addEventListener('mousemove', e => {
+    if (mouseDown) {
+        camera.addYaw(e.movementX / 100)
+        camera.addPitch(e.movementY / 100)
+    }
+});
+
+(twglState.gl.canvas as HTMLElement).addEventListener('mouseup', e => {
+    mouseDown = false;
+});
 
 twglState.gl.canvas.addEventListener("wheel", event => {
     const normalizedZoom = Math.sign((event as any).deltaY);
@@ -44,8 +55,7 @@ twglState.gl.canvas.addEventListener("wheel", event => {
 // static data
 twglState.gl.useProgram(programInfo.program)
 
-const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 0.25)
-//const cubeBuffer = twgl.primitives.createTorusBufferInfo(twglState.gl, 1, 1, 10, 4);
+const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
 twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
 twgl.setUniforms(programInfo, { model: camera.getAmalgamatedMatrix(0)})
 

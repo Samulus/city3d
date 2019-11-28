@@ -22,6 +22,11 @@ export class TWGLState {
             b: (backgroundColor & 255) / 255.0
         }
 
+        this._gl.canvas.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            return false;
+        });
+
         this.onWindowResize();
     }
 

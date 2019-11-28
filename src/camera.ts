@@ -11,11 +11,10 @@ export class Camera {
     private perspectiveMatrix: m4.Mat4;
     private dirty = false;
     private eye: v3.Vec3;
-    private arcball: Arcball;
+    private yaw: number = 0;
+    private pitch: number = 0;
 
-    constructor(arcball: Arcball, fovRadians: number, aspect: number, zNear: number, zFar: number) {
-        this.arcball = arcball;
-
+    constructor(fovRadians: number, aspect: number, zNear: number, zFar: number) {
         this.perspectiveMatrix =  m4.perspective(
             fovRadians,
             aspect,
@@ -27,11 +26,29 @@ export class Camera {
     }
 
     getAmalgamatedMatrix(time: number): m4.Mat4 {
-      return m4.multiply(this.perspectiveMatrix, m4.translation(this.eye));
+      // Zoom Out Matrix
+      const translatedEye = m4.translation(this.eye);
+      const perspectiveTranslation = m4.multiply(this.perspectiveMatrix, translatedEye)
+
+      // Rotation Matrix (todo, these angles are  influencing each other)
+      // the yaw should be global and pitch local or vice versa
+      const yaw = m4.axisRotate(m4.identity(), v3.create(0, 1, 0), this.yaw)
+      const pitch = m4.axisRotate(m4.identity(), v3.create(1, 0, 0), this.pitch)
+      const rotation = m4.multiply(pitch, yaw); 
+
+      return m4.multiply(perspectiveTranslation, rotation);
     }
 
-  
+    addPitch(amount: number) {
+        this.pitch += amount
+        this.dirty = true;
+    }
 
+    addYaw(amount: number) {
+        this.yaw += amount
+        this.dirty = true;
+    }
+  
     zoom(amountMeters: number) {
         this.eye[2] += amountMeters;
         this.dirty = true;
