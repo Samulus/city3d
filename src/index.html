@@ -17,14 +17,19 @@
     uniform mat4 mvp;
     uniform int smallPrime;
     uniform int largePrime;
+    flat out int fRandomInteger;
 
     float scale(float n, float inMin, float inMax, float outMin, float outMax) {
         return ((n - inMin) * (outMax - outMin)) / ((inMax - inMin) + outMin);
     }
 
     void main() {
-        // (smallPrime * smallPrime) is the total grid space for planting buildings.
-        int randomIndex = (gl_InstanceID * largePrime) % (smallPrime * smallPrime);
+        //
+        // Building Position
+        //
+
+        int smallPrimeSquared = smallPrime * smallPrime;
+        int randomIndex = (gl_InstanceID * largePrime) % (smallPrimeSquared);
 
         // 1D Index to 2D Index 
         float col = float(randomIndex % smallPrime) + 0.5;
@@ -37,16 +42,39 @@
         vec4 buildingOffset = vec4(col, 0, row, 0);
         vec4 sceneOffset = vec4(-smallPrime, 0, -smallPrime, 0);
 
-        gl_Position = mvp * (sceneOffset + buildingOffset + position);
+        //
+        // Building Height
+        //
+
+        float randomHeight = float((randomIndex * largePrime) % (smallPrimeSquared));
+        randomHeight = scale(randomHeight, 0.0, float(smallPrimeSquared), 0.0, 128.0);
+
+        vec4 pos = position;
+        pos.y += (randomHeight / 2.0) * (pos.y < 0.0 ? 0.0 : 1.0);
+
+        gl_Position = mvp * (sceneOffset + buildingOffset + pos);
+
+        fRandomInteger = randomIndex;
     }
 </script>
 
 <script id="fragmentShader" type="x-shader/x-fragment">
     #version 300 es
     precision mediump float;
+    flat in int fRandomInteger;
     out vec4 outColor;
+
+    // https://stackoverflow.com/a/12553149
+    vec3 unpackColor(float f) {
+        vec3 color;
+        color.b = floor(f / 256.0 / 256.0);
+        color.g = floor((f - color.b * 256.0 * 256.0) / 256.0);
+        color.r = floor(f - color.b * 256.0 * 256.0 - color.g * 256.0);
+        return color / 255.0;
+    }
+
     void main() {
-        outColor = vec4(0.5, 0, 0, 1);
+        outColor = vec4(unpackColor(float(fRandomInteger)), 1);
     }
 </script>
 

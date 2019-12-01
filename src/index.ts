@@ -18,7 +18,7 @@ const camera = new Camera(
     0.87266462,
     twglState.canvasWidth() / twglState.canvasHeight(),
     0.01,
-    1000
+    5000
 );
 
 const programInfo = twgl.createProgramInfo(twglState.gl, [ 
@@ -49,7 +49,7 @@ let mouseDown = false;
 
 twglState.gl.canvas.addEventListener("wheel", event => {
     const normalizedZoom = Math.sign((event as any).deltaY);
-    camera.zoom(normalizedZoom * -0.5)
+    camera.zoom(normalizedZoom * -10)
 })
 
 // static data
@@ -59,8 +59,8 @@ const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
 twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
 twgl.setUniforms(programInfo, { 
     mvp: camera.getAmalgamatedMatrix(0),
-    smallPrime: 1021,
-    largePrime: 2927
+    smallPrime: 17,
+    largePrime: 5011
 })
 
 twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
@@ -83,7 +83,7 @@ function animate(time: number) {
         twglState.gl.TRIANGLES, 
         cubeBuffer.numElements,
         0,
-        500_000
+        30
     );
     requestAnimationFrame(animate);
 }
