@@ -34,22 +34,26 @@ window.addEventListener('resize', (): any => {
 let mouseDown = false;
 (twglState.gl.canvas as HTMLElement).addEventListener('mousedown', e => {
    mouseDown = true;
+   requestAnimationFrame(animate);
 });
 
 (twglState.gl.canvas as HTMLElement).addEventListener('mousemove', e => {
     if (mouseDown) {
         camera.addYaw(e.movementX / 100)
         camera.addPitch(e.movementY / 100)
+        requestAnimationFrame(animate);
     }
 });
 
 (twglState.gl.canvas as HTMLElement).addEventListener('mouseup', e => {
     mouseDown = false;
+    requestAnimationFrame(animate);
 });
 
 twglState.gl.canvas.addEventListener("wheel", event => {
     const normalizedZoom = Math.sign((event as any).deltaY);
     camera.zoom(normalizedZoom * -10)
+    requestAnimationFrame(animate);
 })
 
 // static data
@@ -85,7 +89,6 @@ function animate(time: number) {
         0,
         30
     );
-    requestAnimationFrame(animate);
 }
 
 animate(0);
