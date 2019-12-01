@@ -19,26 +19,25 @@
     uniform int largePrime;
 
     float scale(float n, float inMin, float inMax, float outMin, float outMax) {
-        return (n - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+        return ((n - inMin) * (outMax - outMin)) / ((inMax - inMin) + outMin);
     }
 
     void main() {
+        // (smallPrime * smallPrime) is the total grid space for planting buildings.
+        int randomIndex = (gl_InstanceID * largePrime) % (smallPrime * smallPrime);
 
-        // 1D Index -> 2D Coordinates (+ half offset)
-        //float col = float(randomIndex % smallPrime) + 0.5;
-        //float row = float(randomIndex) / float(smallPrime) + 0.5;
+        // 1D Index to 2D Index 
+        float col = float(randomIndex % smallPrime) + 0.5;
+        float row = float(randomIndex / smallPrime) + 0.5;
 
-        // 2D -> 2D Normalized
-        //row /= float(smallPrime);
-        //col /= float(smallPrime);
+        float halfOfGrid = float(smallPrime) * 0.5f;
+        col = scale(col, 0.0, float(smallPrime), -halfOfGrid, halfOfGrid);
+        row = scale(row, 0.0, float(smallPrime), -halfOfGrid, halfOfGrid);
 
-        // 2D Normalized -> World
-        //float halfOfGrid = float(smallPrime) * 0.5;
-        //row = scale(row, 0.0, 1.0, -halfOfGrid, halfOfGrid);
-        //col = scale(col, 0.0, 1.0, -halfOfGrid, halfOfGrid);
+        vec4 buildingOffset = vec4(col, 0, row, 0);
+        vec4 sceneOffset = vec4(-smallPrime, 0, -smallPrime, 0);
 
-        int randomIndex = (gl_InstanceID * largePrime) % smallPrime;
-        gl_Position = mvp * (vec4(randomIndex, randomIndex, 0, 0) + position);
+        gl_Position = mvp * (sceneOffset + buildingOffset + position);
     }
 </script>
 
@@ -47,7 +46,7 @@
     precision mediump float;
     out vec4 outColor;
     void main() {
-        outColor = vec4(1, 0, 0, 1);
+        outColor = vec4(0.5, 0, 0, 1);
     }
 </script>
 
