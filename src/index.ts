@@ -63,8 +63,7 @@ const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
 twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
 twgl.setUniforms(programInfo, { 
     mvp: camera.getAmalgamatedMatrix(0),
-    smallPrime: 17,
-    largePrime: 5011
+    gridSize: 3,
 })
 
 twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
@@ -78,7 +77,9 @@ function animate(time: number) {
     );
 
     if (camera.isDirty) {
-        twgl.setUniforms(programInfo, { mvp: camera.getAmalgamatedMatrix(0), }) 
+        twgl.setUniforms(programInfo, { 
+            mvp: camera.getAmalgamatedMatrix(0), 
+        }) 
     }
 
     twgl.drawBufferInfo(
@@ -87,7 +88,7 @@ function animate(time: number) {
         twglState.gl.TRIANGLES, 
         cubeBuffer.numElements,
         0,
-        30
+        8
     );
 }
 

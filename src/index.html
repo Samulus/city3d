@@ -15,12 +15,18 @@
     precision mediump float;
     in vec4 position;
     uniform mat4 mvp;
-    uniform int smallPrime;
-    uniform int largePrime;
+    uniform int gridSize;
     flat out int fRandomInteger;
+
+    #define SMALL_PRIME 3209
+    #define LARGE_PRIME 9967
 
     float scale(float n, float inMin, float inMax, float outMin, float outMax) {
         return ((n - inMin) * (outMax - outMin)) / ((inMax - inMin) + outMin);
+    }
+
+    float randomValueNormalized(int n) {
+        return fract(sin(float(gl_InstanceID))*100000.0);
     }
 
     void main() {
@@ -28,33 +34,46 @@
         // Building Position
         //
 
-        int smallPrimeSquared = smallPrime * smallPrime;
-        int randomIndex = (gl_InstanceID * largePrime) % (smallPrimeSquared);
+        float randomValue = randomValueNormalized(gl_InstanceID);
+        int randomIndex = int(scale(randomValue, 0.0, 1.0, 0.0, float(gridSize * gridSize)));
 
         // 1D Index to 2D Index 
-        float col = float(randomIndex % smallPrime) + 0.5;
-        float row = float(randomIndex / smallPrime) + 0.5;
+        float col = float(randomIndex % gridSize) + 0.5;
+        float row = float(randomIndex / gridSize) + 0.5;
 
-        float halfOfGrid = float(smallPrime) * 0.5f;
-        col = scale(col, 0.0, float(smallPrime), -halfOfGrid, halfOfGrid);
-        row = scale(row, 0.0, float(smallPrime), -halfOfGrid, halfOfGrid);
+        float halfOfGrid = float(gridSize) * 0.5f;
+        col = scale(col, 0.0, float(gridSize), -halfOfGrid, halfOfGrid);
+        row = scale(row, 0.0, float(gridSize), -halfOfGrid, halfOfGrid);
 
         vec4 buildingOffset = vec4(col, 0, row, 0);
-        vec4 sceneOffset = vec4(-smallPrime, 0, -smallPrime, 0);
+        vec4 sceneOffset = vec4(-gridSize, 0, -gridSize, 0);
 
         //
         // Building Height
         //
 
-        float randomHeight = float((randomIndex * largePrime) % (smallPrimeSquared));
-        randomHeight = scale(randomHeight, 0.0, float(smallPrimeSquared), 0.0, 128.0);
+
+        float randomHeight = scale(
+            float((randomIndex * LARGE_PRIME) % SMALL_PRIME), 
+            0.0, 
+            float(SMALL_PRIME), 
+            0.0, 128.0
+        );
+
+        int randomColor = int(scale(
+            float(int(float(int(randomValueNormalized(randomIndex)) * LARGE_PRIME)) % SMALL_PRIME),
+            0.0, 
+            float(SMALL_PRIME), 
+            0.0, 16000000.0
+        ));
+
 
         vec4 pos = position;
         pos.y += (randomHeight / 2.0) * (pos.y < 0.0 ? 0.0 : 1.0);
 
         gl_Position = mvp * (sceneOffset + buildingOffset + pos);
 
-        fRandomInteger = randomIndex;
+        fRandomInteger = 376063;
     }
 </script>
 
@@ -64,17 +83,16 @@
     flat in int fRandomInteger;
     out vec4 outColor;
 
-    // https://stackoverflow.com/a/12553149
-    vec3 unpackColor(float f) {
+    vec3 unpackColor(int c) {
         vec3 color;
-        color.b = floor(f / 256.0 / 256.0);
-        color.g = floor((f - color.b * 256.0 * 256.0) / 256.0);
-        color.r = floor(f - color.b * 256.0 * 256.0 - color.g * 256.0);
-        return color / 255.0;
+        color.r = float((c >> 16) & 255) / 255.0;
+        color.g = float((c >> 8) & 255) / 255.0;
+        color.b = float(c & 255) / 255.0;
+        return color;
     }
 
     void main() {
-        outColor = vec4(unpackColor(float(fRandomInteger)), 1);
+        outColor = vec4(unpackColor(fRandomInteger), 1);
     }
 </script>
 
