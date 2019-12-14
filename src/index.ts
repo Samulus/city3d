@@ -69,7 +69,8 @@ twgl.setUniforms(programInfo, {
     PRIMES: RANDOM_PRIMES
 })
 
-twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
+twglState.gl.clearColor(0, 0, 0, 1)
+//twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
 twglState.gl.enable(twglState.gl.DEPTH_TEST);
 
 function animate(time: number) {
