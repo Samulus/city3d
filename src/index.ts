@@ -8,6 +8,7 @@ import './index.css'
 import * as twgl from 'twgl.js';
 import { TWGLState } from './twglstate';
 import { Camera } from './camera';
+import { RANDOM_PRIMES } from './primes';
 
 // Init
 const twglState = new TWGLState(
@@ -63,7 +64,9 @@ const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
 twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
 twgl.setUniforms(programInfo, { 
     mvp: camera.getAmalgamatedMatrix(0),
-    gridSize: 3,
+    gridSize: 100,
+    seed: 10,
+    PRIMES: RANDOM_PRIMES
 })
 
 twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
@@ -88,7 +91,7 @@ function animate(time: number) {
         twglState.gl.TRIANGLES, 
         cubeBuffer.numElements,
         0,
-        8
+        500 // this should be between [0, gridSize]
     );
 }
 

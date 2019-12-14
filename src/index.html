@@ -12,75 +12,63 @@
 
 <script id="vertexShader" type="x-shader/x-vertex">
     #version 300 es
+
+    #define MAX_GRID_SIZE 100
+    #define MAX_BUILDING_HEIGHT 51
+    #define MAX_COLOR 10000000
+
     precision mediump float;
-    in vec4 position;
     uniform mat4 mvp;
     uniform int gridSize;
-    flat out int fRandomInteger;
+    uniform int seed;
+    uniform int[MAX_GRID_SIZE] PRIMES;
 
-    #define SMALL_PRIME 3209
-    #define LARGE_PRIME 9967
+    in vec4 position;
+    flat out int buildingColor;
 
     float scale(float n, float inMin, float inMax, float outMin, float outMax) {
         return ((n - inMin) * (outMax - outMin)) / ((inMax - inMin) + outMin);
     }
 
-    float randomValueNormalized(int n) {
-        return fract(sin(float(gl_InstanceID))*100000.0);
-    }
-
     void main() {
-        //
-        // Building Position
-        //
+        // We prevent moire patterns from forming in the output by using an array of 
+        // prime numbers in our LCG instead of two single numbers for the entire grid.
+        int gridSizeSquared = gridSize * gridSize;
+        int metaIndex = (gl_InstanceID * PRIMES[gl_InstanceID % MAX_GRID_SIZE]) % gridSizeSquared;
+        int buildingIndex = (gl_InstanceID * PRIMES[(metaIndex + seed) % MAX_GRID_SIZE]) % gridSizeSquared;
 
-        float randomValue = randomValueNormalized(gl_InstanceID);
-        int randomIndex = int(scale(randomValue, 0.0, 1.0, 0.0, float(gridSize * gridSize)));
+        // 1D Index to 2D Index (top left origin, row major)
+        float col = float(buildingIndex % gridSize);
+        float row = float(buildingIndex / gridSize);
 
-        // 1D Index to 2D Index 
-        float col = float(randomIndex % gridSize) + 0.5;
-        float row = float(randomIndex / gridSize) + 0.5;
-
+        // 2D index to World Coordinate System
         float halfOfGrid = float(gridSize) * 0.5f;
         col = scale(col, 0.0, float(gridSize), -halfOfGrid, halfOfGrid);
         row = scale(row, 0.0, float(gridSize), -halfOfGrid, halfOfGrid);
 
+        // Vectors for positioning the xz location of each building and 
+        // the group of buildings themselves
         vec4 buildingOffset = vec4(col, 0, row, 0);
         vec4 sceneOffset = vec4(-gridSize, 0, -gridSize, 0);
 
-        //
-        // Building Height
-        //
+        // LCG for random heights / colors
+        float randomHeight = float((buildingIndex * PRIMES[buildingIndex % MAX_GRID_SIZE]) % MAX_BUILDING_HEIGHT);
+        buildingColor = (metaIndex * PRIMES[metaIndex]) % MAX_COLOR;
 
-
-        float randomHeight = scale(
-            float((randomIndex * LARGE_PRIME) % SMALL_PRIME), 
-            0.0, 
-            float(SMALL_PRIME), 
-            0.0, 128.0
-        );
-
-        int randomColor = int(scale(
-            float(int(float(int(randomValueNormalized(randomIndex)) * LARGE_PRIME)) % SMALL_PRIME),
-            0.0, 
-            float(SMALL_PRIME), 
-            0.0, 16000000.0
-        ));
-
-
+        // Stretch the buildings conditionally: only positive y vertices (those closest to
+        // the roof should scale), i.e like a building.
         vec4 pos = position;
         pos.y += (randomHeight / 2.0) * (pos.y < 0.0 ? 0.0 : 1.0);
 
         gl_Position = mvp * (sceneOffset + buildingOffset + pos);
 
-        fRandomInteger = 376063;
     }
 </script>
 
 <script id="fragmentShader" type="x-shader/x-fragment">
     #version 300 es
     precision mediump float;
-    flat in int fRandomInteger;
+    flat in int buildingColor;
     out vec4 outColor;
 
     vec3 unpackColor(int c) {
@@ -92,7 +80,7 @@
     }
 
     void main() {
-        outColor = vec4(unpackColor(fRandomInteger), 1);
+        outColor = vec4(unpackColor(buildingColor), 1);
     }
 </script>
 
