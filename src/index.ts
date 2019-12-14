@@ -65,7 +65,7 @@ twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
 twgl.setUniforms(programInfo, { 
     mvp: camera.getAmalgamatedMatrix(0),
     gridSize: 100,
-    seed: 10,
+    seed: 12,
     PRIMES: RANDOM_PRIMES
 })
 

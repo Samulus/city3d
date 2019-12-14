@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="index.css">
 <body>
-<div class="f4 f1-ns fw4 ma4 title">City<sup class="h-25 fw1">3d</sup></div>
+<div class="f4 f1-ns fw4 ma4 title">Intersection Test<sup class="h-25 fw1">3d</sup></div>
 
 <div class="flex flex-column ma4 vh-50 vh-75-l overflow-hidden">
     <canvas class="h-inherit" tabindex='1' id="scene"></canvas>
@@ -15,7 +15,7 @@
 
     #define MAX_GRID_SIZE 100
     #define MAX_BUILDING_HEIGHT 51
-    #define MAX_COLOR 10000000
+    #define MAX_COLOR 16000000
 
     precision mediump float;
     uniform mat4 mvp;
@@ -53,7 +53,12 @@
 
         // LCG for random heights / colors
         float randomHeight = float((buildingIndex * PRIMES[buildingIndex % MAX_GRID_SIZE]) % MAX_BUILDING_HEIGHT);
-        buildingColor = (metaIndex * PRIMES[metaIndex]) % MAX_COLOR;
+        buildingColor = int(
+            float(buildingIndex) * 
+            randomHeight * 
+            float(metaIndex) +
+            float(gl_InstanceID)
+        );
 
         // Stretch the buildings conditionally: only positive y vertices (those closest to
         // the roof should scale), i.e like a building.
