@@ -1,7 +1,7 @@
 //
-// index.js
+// primes.js
 // Author: Samuel Vargas
-// Date: 12/11/2019
+// Date: 12/13/2019
 //
 
 export const RANDOM_PRIMES = [ 
