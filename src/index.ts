@@ -22,17 +22,6 @@ const camera = new Camera(
     5000
 );
 
-// UI
-document.getElementById("seed")!.addEventListener("keydown", (ev: Event) => {
-    twgl.setUniforms(programInfo, { 
-        seed: (ev.target as HTMLInputElement).value,
-    })
-
-    // TODO: We shouldn't have to request an animation frame for the effect to occur?
-    //       or we should wrap it better.
-    requestAnimationFrame(animate);
-});
-
 const programInfo = twgl.createProgramInfo(twglState.gl, [ 
     document.getElementById("vertexShader")!.textContent as string,
     document.getElementById("fragmentShader")!.textContent as string,
