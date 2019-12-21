@@ -21,7 +21,10 @@
     uniform mat4 mvp;
     uniform int gridSize;
     uniform int seed;
-    uniform int[MAX_GRID_SIZE] PRIMES;
+
+    layout (std140) uniform UBO {
+        int[MAX_GRID_SIZE] PRIMES;
+    };
 
     in vec4 position;
     flat out int buildingColor;

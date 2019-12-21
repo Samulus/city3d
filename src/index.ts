@@ -66,11 +66,25 @@ twgl.setUniforms(programInfo, {
     mvp: camera.getAmalgamatedMatrix(0),
     gridSize: 100,
     seed: 17,
-    PRIMES: RANDOM_PRIMES
 })
 
+// UBO
+const uboBuffer =  twglState.gl.createBuffer();
+twglState.gl.bindBuffer(twglState.gl.UNIFORM_BUFFER, uboBuffer);
+twglState.gl.bufferData(twglState.gl.UNIFORM_BUFFER, 1600, twglState.gl.STATIC_DRAW);
+
+let k=0;
+for (let i=0; i < 1600; i += 16) {
+    twglState.gl.bufferSubData(twglState.gl.UNIFORM_BUFFER, i, Uint32Array.of(RANDOM_PRIMES[k]));
+    k++;
+}
+
+const uboIndex = twglState.gl.getUniformBlockIndex(programInfo.program, "UBO")
+twglState.gl.uniformBlockBinding(programInfo.program, uboIndex, 0);
+twglState.gl.bindBufferBase(twglState.gl.UNIFORM_BUFFER, 0, uboBuffer);
+
+
 twglState.gl.clearColor(0, 0, 0, 1)
-//twglState.gl.clearColor(255/255, 246/255, 227/255, 255/255)
 twglState.gl.enable(twglState.gl.DEPTH_TEST);
 
 function animate(time: number) {
