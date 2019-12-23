@@ -43,7 +43,6 @@ export class TWGLState {
         );
     }
 
-
     onWindowResize() {
         const width = (this._gl.canvas as HTMLElement).parentElement!.clientWidth;
         const height = (this._gl.canvas as HTMLElement).parentElement!.clientHeight;

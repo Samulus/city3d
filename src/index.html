@@ -19,11 +19,13 @@
     precision mediump float;
     precision mediump usampler2D;
 
-    uniform mat4 mvp;
-    uniform int gridSize;
-    uniform int seed;
+    layout (std140) uniform GlobalState {
+        mat4 mvp;
+        int gridSize;
+        int seed;
+    };
 
-    uniform usampler2D globalBuffer;
+    uniform usampler2D primeBuffer;
 
     in vec4 position;
     flat out int buildingColor;
@@ -42,11 +44,11 @@
         int gridSizeSquared = gridSize * gridSize;
 
         int metaIndex =
-            (gl_InstanceID * getIntAtIndex(globalBuffer, int(gl_InstanceID % MAX_GRID_SIZE)))
+            (gl_InstanceID * getIntAtIndex(primeBuffer, int(gl_InstanceID % MAX_GRID_SIZE)))
             % gridSizeSquared;
 
         int buildingIndex = 
-            (gl_InstanceID * getIntAtIndex(globalBuffer, int((metaIndex + seed) % MAX_GRID_SIZE))) 
+            (gl_InstanceID * getIntAtIndex(primeBuffer, int((metaIndex + seed) % MAX_GRID_SIZE))) 
             % gridSizeSquared;
 
         // 1D Index to 2D Index (top left origin, row major)
@@ -65,7 +67,7 @@
 
         // LCG for random heights / colors
         float randomHeight = float(
-            (buildingIndex * getIntAtIndex(globalBuffer, buildingIndex % MAX_GRID_SIZE) 
+            (buildingIndex * getIntAtIndex(primeBuffer, buildingIndex % MAX_GRID_SIZE) 
             % MAX_BUILDING_HEIGHT)
         );
 

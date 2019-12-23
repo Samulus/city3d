@@ -9,6 +9,7 @@ import * as twgl from 'twgl.js';
 import { TWGLState } from './twglstate';
 import { Camera } from './camera';
 import { RANDOM_PRIMES } from './primes';
+import { UBO } from './ubo';
 
 // Init
 const twglState = new TWGLState(
@@ -61,18 +62,16 @@ twglState.gl.canvas.addEventListener("wheel", event => {
 twglState.gl.useProgram(programInfo.program)
 
 const cubeBuffer = twgl.primitives.createCubeBufferInfo(twglState.gl, 1)
-twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer)
-twgl.setUniforms(programInfo, { 
-    mvp: camera.getAmalgamatedMatrix(0),
-    gridSize: 100,
-    seed: 17,
-})
+twgl.setBuffersAndAttributes(twglState.gl, programInfo, cubeBuffer);
 
-// texture: globalBuffer
 twglState.gl.pixelStorei(twglState.gl.UNPACK_ALIGNMENT, 1); // 1 byte at a time please
 
-const globalBuffer = twglState.gl.createTexture();
-twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, globalBuffer);
+//
+// PrimeBuffer Texture
+//
+
+const primeBuffer = twglState.gl.createTexture();
+twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, primeBuffer);
 twglState.gl.texImage2D(
     twglState.gl.TEXTURE_2D,
     0,
@@ -87,10 +86,20 @@ twglState.gl.texImage2D(
 twglState.gl.texParameteri(twglState.gl.TEXTURE_2D, twglState.gl.TEXTURE_MIN_FILTER, twglState.gl.NEAREST);
 twglState.gl.texParameteri(twglState.gl.TEXTURE_2D, twglState.gl.TEXTURE_MAG_FILTER, twglState.gl.NEAREST);
 twglState.gl.activeTexture(twglState.gl.TEXTURE0);
-twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, globalBuffer)
+twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, primeBuffer)
 
-const index = twglState.gl.getUniformLocation(programInfo.program, "globalBuffer")
+const index = twglState.gl.getUniformLocation(programInfo.program, "primeBuffer")
 twglState.gl.uniform1i(index, 0);
+
+//
+// Global State UBO
+//
+
+const ubo = new UBO(twglState.gl, 96, twglState.gl.DYNAMIC_DRAW);
+ubo.attachToShader(twglState.gl, programInfo.program, "GlobalState", 0);
+ubo.bufferSubMat4(twglState.gl, camera.getAmalgamatedMatrix(0), 0); // mat4 mvp;
+ubo.bufferSubUint32(twglState.gl, 100, 64); // int gridSize
+ubo.bufferSubUint32(twglState.gl, 17, 68); // int seed;
 
 twglState.gl.clearColor(0, 0, 0, 1)
 twglState.gl.enable(twglState.gl.DEPTH_TEST);
@@ -103,9 +112,7 @@ function animate(time: number) {
     );
 
     if (camera.isDirty) {
-        twgl.setUniforms(programInfo, { 
-            mvp: camera.getAmalgamatedMatrix(0), 
-        }) 
+        ubo.bufferSubMat4(twglState.gl, camera.getAmalgamatedMatrix(0), 0); // mat4 mvp;
     }
 
     twgl.drawBufferInfo(
@@ -114,7 +121,7 @@ function animate(time: number) {
         twglState.gl.TRIANGLES, 
         cubeBuffer.numElements,
         0,
-        500 // this should be between [0, gridSize]
+        500 // this should be between [0, gridSize*gridSize]
     );
 }
 
