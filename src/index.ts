@@ -68,21 +68,29 @@ twgl.setUniforms(programInfo, {
     seed: 17,
 })
 
-// UBO
-const uboBuffer =  twglState.gl.createBuffer();
-twglState.gl.bindBuffer(twglState.gl.UNIFORM_BUFFER, uboBuffer);
-twglState.gl.bufferData(twglState.gl.UNIFORM_BUFFER, 1600, twglState.gl.STATIC_DRAW);
+// texture: globalBuffer
+twglState.gl.pixelStorei(twglState.gl.UNPACK_ALIGNMENT, 1); // 1 byte at a time please
 
-let k=0;
-for (let i=0; i < 1600; i += 16) {
-    twglState.gl.bufferSubData(twglState.gl.UNIFORM_BUFFER, i, Uint32Array.of(RANDOM_PRIMES[k]));
-    k++;
-}
+const globalBuffer = twglState.gl.createTexture();
+twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, globalBuffer);
+twglState.gl.texImage2D(
+    twglState.gl.TEXTURE_2D,
+    0,
+    twglState.gl.R32UI,
+    RANDOM_PRIMES.length,
+    1,
+    0,
+    twglState.gl.RED_INTEGER,
+    twglState.gl.UNSIGNED_INT,
+    RANDOM_PRIMES);
 
-const uboIndex = twglState.gl.getUniformBlockIndex(programInfo.program, "UBO")
-twglState.gl.uniformBlockBinding(programInfo.program, uboIndex, 0);
-twglState.gl.bindBufferBase(twglState.gl.UNIFORM_BUFFER, 0, uboBuffer);
+twglState.gl.texParameteri(twglState.gl.TEXTURE_2D, twglState.gl.TEXTURE_MIN_FILTER, twglState.gl.NEAREST);
+twglState.gl.texParameteri(twglState.gl.TEXTURE_2D, twglState.gl.TEXTURE_MAG_FILTER, twglState.gl.NEAREST);
+twglState.gl.activeTexture(twglState.gl.TEXTURE0);
+twglState.gl.bindTexture(twglState.gl.TEXTURE_2D, globalBuffer)
 
+const index = twglState.gl.getUniformLocation(programInfo.program, "globalBuffer")
+twglState.gl.uniform1i(index, 0);
 
 twglState.gl.clearColor(0, 0, 0, 1)
 twglState.gl.enable(twglState.gl.DEPTH_TEST);
